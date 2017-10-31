@@ -1,0 +1,4 @@
+django==1.10.8
+djangorestframework==3.4.7
+requests==2.18.4
+celery==4.1.0

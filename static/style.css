@@ -1,0 +1,44 @@
+body {
+	width: 90%;
+	margin: 0 auto;
+}
+
+.article {
+	height: 25vw;
+	border-bottom: 1px black solid;
+    margin-top: 10px;
+}
+
+.article img {
+	width: 15%;
+	height: 40%;
+	float: left;
+	padding: 5px;
+}
+
+.article-content {
+	height: 60%;
+	width: 100%;
+	float: right;
+	position: relative;
+}
+
+.article-content .url {
+	position: absolute;
+}
+
+.article-footer {
+	bottom: 0;
+	position: absolute;
+	width: 100%;
+}
+
+.article-footer .author {
+	bottom: 0;
+	float: left;
+}
+
+.article-footer .published {
+	float: right;
+	padding-left: 50px;
+}
