@@ -6,7 +6,7 @@ import re
 
 # Local
 from reachlocalnews.celery import app
-from .serializer import ArticleSerializer, SourcesSerializer
+from .serializer import ArticleSerializer, SourceSerializer
 from .models import Article, Source
 
 
@@ -34,27 +34,27 @@ def get_sources():
     sources = r.json()
 
     for source in sources['sources']: 
-        if Sources.objects.filter(source_id=source['id']):
+        if Source.objects.filter(source_id=source['id']):
             pass
         else:
             valid_data = {
                 'source_id': source['id'],
                 'name': source['name']
             }
-            serialized_data = SourcesSerializer(data=valid_data)
+            serialized_data = SourceSerializer(data=valid_data)
 
             if serialized_data.is_valid():
-                SourcesSerializer.save(serialized_data)
+                SourceSerializer.save(serialized_data)
 
 @app.task
 def get_articles():
-    ''' Gets articles from sources saved in database via newsapi. 
+    ''' Gets articles from Source saved in database via newsapi. 
         Task is called via Celery Beat schedule every 30 seconds
         defined at top of file. Poplulates the Articles model.
     '''
     is_url = re.compile(r'\s?(?:http)s?://')
     name_in_url = re.compile(r'/.*/(.*)/')
-    source_list = Sources.objects.filter()
+    source_list = Source.objects.filter()
 
     for source in source_list:
         r = requests.get(

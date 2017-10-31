@@ -1,9 +1,9 @@
 from rest_framework import serializers
-from .models import Article, Sources
+from .models import Article, Source
 
-class SourcesSerializer(serializers.ModelSerializer):
+class SourceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Sources
+        model = Source
         fields = ('source_id', 'name')
 
 class ArticleSerializer(serializers.ModelSerializer):
