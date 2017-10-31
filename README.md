@@ -3,7 +3,7 @@
 DISCLAIMER: This is only for use in Development environments right now.
 
 ### Overview
-Django Application that collects news source & articles using Celery Beat schedule against tasks. 
+Django Application that collects news source & articles using Celery Beat scheduled tasks. Uses the django rest framework for fetching API data.
 
 Once collected, articles and relevant links are kept in the database and loaded from:
 
