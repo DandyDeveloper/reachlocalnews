@@ -30,7 +30,7 @@ ALLOWED_HOSTS = []
 
 # API Key stored locally in environment
 
-API_KEY ="" 
+API_KEY = ''
 
 if API_KEY is None:
     raise OSError("REACHLOCAL_API_KEY must be set.")
@@ -134,4 +134,3 @@ STATICFILES_DIRS = [
 ]
 
 # Celery Settings
-CELERY_BROKER_URL = 'amqp://'
