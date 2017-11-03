@@ -1,7 +1,7 @@
 ## Django News Articles
 DISCLAIMER: This is only for use in Development environments right now.
 
-Todo: Unit tests, Pep-8 validation, better validation on tasks (try/catch).
+Todo: Unit tests
 
 ### Overview
 Django Application that collects news source & articles using Celery Beat scheduled tasks. Uses the django rest framework for fetching API data.
@@ -21,7 +21,7 @@ pip
 virtualenv
 rabbitmq-server
 
-To install these requirements: 
+To install these requirements:
 
 `sudo apt-get update`
 
@@ -35,7 +35,7 @@ Start the virtualenv: `source env/bin/activate`
 
 Install the requirements `pip install -r requirements.txt`
 
-Update API_KEY with your newsapi.org API KEY and SECRET_KEY with a random string in the `settings.py` file.  
+Update API_KEY with your newsapi.org API KEY and SECRET_KEY with a random string in the `settings.py` file.
 
 Create the Django DB (Sqlite3 by default): `python manage.py migrate`
 
@@ -43,7 +43,7 @@ Run the Django application: `python manage.py runserver localhost:8080`
 
 Run the Celery worker (From a new terminal with the virtualenv enabled): `celery -A  reachlocalnews worker -l info -B`
 
-From your browser, navigate to: 
+From your browser, navigate to:
 
 http://localhost:8080/articles/articles - HTML
 
