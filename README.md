@@ -1,6 +1,7 @@
 ## Django News Articles
-
 DISCLAIMER: This is only for use in Development environments right now.
+
+Todo: Unit tests, Pep-8 validation, better validation on tasks (try/catch).
 
 ### Overview
 Django Application that collects news source & articles using Celery Beat scheduled tasks. Uses the django rest framework for fetching API data.
