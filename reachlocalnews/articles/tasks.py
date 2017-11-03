@@ -10,7 +10,7 @@ from .serializer import ArticleSerializer, SourceSerializer
 from .models import Article, Source
 
 
-app.conf.beat_schedule ={
+app.conf.beat_schedule = {
     'get-sources-every-10-seconds': {
         'task': 'reachlocalnews.articles.tasks.get_sources',
         'schedule': 10.0,
@@ -21,19 +21,19 @@ app.conf.beat_schedule ={
     },
 }
 
+
 @app.task
 def get_sources():
-    ''' Gets sources from newsapi.org. New sources are checked 
+    ''' Gets sources from newsapi.org. New sources are checked
         and added if not in database. Task is called every 10 seconds
         by Celery Beat Schedule defined at top of file.
-
     '''
     r = requests.get(
             'https://newsapi.org/v1/sources?language=en'
         )
     sources = r.json()
 
-    for source in sources['sources']: 
+    for source in sources['sources']:
         if Source.objects.filter(source_id=source['id']):
             pass
         else:
@@ -46,14 +46,13 @@ def get_sources():
             if serialized_data.is_valid():
                 SourceSerializer.save(serialized_data)
 
+
 @app.task
 def get_articles():
-    ''' Gets articles from Source saved in database via newsapi. 
+    ''' Gets articles from Source saved in database via newsapi.
         Task is called via Celery Beat schedule every 30 seconds
-        defined at top of file. Poplulates the Articles model.
+        Poplulates the Articles model.
     '''
-    is_url = re.compile(r'\s?(?:http)s?://')
-    name_in_url = re.compile(r'/.*/(.*)/')
     source_list = Source.objects.filter()
 
     for source in source_list:
@@ -63,36 +62,42 @@ def get_articles():
         articles = r.json()
 
         for article in articles['articles']:
-            # If article exists. Ignore.
             if Article.objects.filter(url=article['url']):
                 pass
             else:
-                # Add source to article Object
-                article['source'] = articles['source']
+                try:
+                    # Validates URL
+                    is_url = re.compile(r'\s?(?:http)s?://')
+                    # Locate author name in URL
+                    name_in_url = re.compile(r'/.*/(.*)/')
 
-                # Block to support different article API problems
-                # Is no author given. Populate with source.
-                if article['author'] is None:
-                    article['author'] = article['source']
-                # If multiple articles. Add both to article listing.
-                elif len(article['author'].split(',')) >= 2:
-                    authors = []
-                    for author in article['author'].strip().split(','):
-                        if re.match(is_url, author):
-                            name = re.search(name_in_url, author)
-                            authors.append(name.group(1))
-                        else:
-                            authors.append(author)
-                    article['author'] = ' '.join(authors)
-                # If URL... Convert to name
-                elif re.match(is_url, article['author']):
-                    name = re.search(name_in_url, article['author']).group(1)
-                    article['author'] = name
+                    # Add source to article
+                    article['source'] = articles['source']
 
-                serialized_data = ArticleSerializer(data=article)
+                    # Block to support different article API problems
+                    if article['author'] is None:
+                        article['author'] = article['source']
+                    elif len(article['author'].split(',')) >= 2:
+                        authors = []
 
-                if serialized_data.is_valid():
-                    ArticleSerializer.save(serialized_data)
-                else:
-                    # Raises errors in DEBUG.
-                    print(serialized_data.errors)
+                        for author in article['author'].strip().split(','):
+                            if re.match(is_url, author):
+                                name = re.search(name_in_url, author)
+                                authors.append(name.group(1))
+                            else:
+                                authors.append(author)
+
+                        article['author'] = ' '.join(authors)
+                    elif re.match(is_url, article['author']):
+                        name = re.search(name_in_url, article['author']).group(1)
+                        article['author'] = name
+
+                    serialized_data = ArticleSerializer(data=article)
+
+                    if serialized_data.is_valid():
+                        ArticleSerializer.save(serialized_data)
+                    else:
+                        # Raises errors in DEBUG.
+                        print(serialized_data.errors)
+                except Exception as e:
+                    print("Exception: " + str(e))
